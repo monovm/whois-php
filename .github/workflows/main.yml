@@ -1,0 +1,35 @@
+name: Build Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3.0.0
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "7.4"
+          coverage: "pcov"
+          extensions: mbstring, pcov
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction
+
+      - name: PHP Code Sniffer
+        run: vendor/bin/phpcs
+
+      - name: PHP Code Sniffer - Fix
+        run: vendor/bin/phpcbf --standard=PSR12 src/
+
+      - name: Run Tests
+        run: vendor/bin/phpunit --coverage-text
