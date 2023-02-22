@@ -22,8 +22,8 @@ class WHOIS
 
     protected function load()
     {
-        $path = './dist.whois.json';
-        $overridePath = './whois.json';
+        $path = __DIR__ . '/dist.whois.json';
+        $overridePath = __DIR__ . '/whois.json';
         $this->definitions = array_merge(
             $this->parseFile($path),
             $this->parseFile($overridePath),
