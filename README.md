@@ -25,6 +25,15 @@ $whoisHandler = WhoisHandler::whois('monovm.com')
 #### Available methods:
 **After initiating the handler method you will have access to the following methods:**
 
+| Method        | Description                                                                                                      |
+|---------------|------------------------------------------------------------------------------------------------------------------|
+| `isAvailable` | Returns true if the domain is available for registration                                                         |
+| `isValid`     | Returns true if the domain can be looked up                                                                      |
+| `getWhoisMessage` | Returns the whois server message as a string including availability, validation or the domain whois information  |
+| `getTld`      | Returns the top level domain of the entered domain as a string                                                   |
+| `getSld`      | Returns the second level domain of the entered domain as a string                                                |
+
+
 :green_circle: `isAvailable()` method takes a single parameter, the domain name, as a string value. If the domain is available for registration, the method returns a boolean true value. If the domain is already registered, the method returns a boolean false value.
 ```PHP
 $available = $whoisHandler->isAvailable();
@@ -51,6 +60,32 @@ $tld = $whoisHandler->getTld();
 ```PHP
 $sld = $whoisHandler->getSld();
 ```
+
+## :globe_with_meridians: Whois Server List
+
+
+| TLD                                                                                                                                                                                                                                                                                                                                                                               | WHOIS Server                     |
+|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------|
+| .com, .net, .es, .com.es, .nom.es, .gob.es, .edu.es                                                                                                                                                                                                                                                                                                                               | whois.crsnic.net                 |
+| .org, .ngo, .ong                                                                                                                                                                                                                                                                                                                                                                  | whois.publicinterestregistry.net |
+| .uk, .co.uk, .net.uk, .org.uk, .ltd.uk, .plc.uk, .me.uk                                                                                                                                                                                                                                                                                                                           | whois.nic.uk                     |
+| .edu, .mil                                                                                                                                                                                                                                                                                                                                                                        | whois.internic.net               |
+| .br.com, .cn.com, .eu.com, .no.com, .qc.com, .sa.com, .se.com, .se.net, .us.com, .uy.com, .za.com, .uk.com, .uk.net, .gb.com, .gb.net, .online,.site                                                                                                                                                                                                                              | whois.centralnic.com             |
+| .ink                                                                                                                                                                                                                                                                                                                                                                              | whois.nic.ink                    |
+| .com.de                                                                                                                                                                                                                                                                                                                                                                           | whois.centralnic.com             |
+| .ac, .co.ac                                                                                                                                                                                                                                                                                                                                                                       | whois.nic.ac                     |
+| .af                                                                                                                                                                                                                                                                                                                                                                               | whois.nic.af                     |
+| .am                                                                                                                                                                                                                                                                                                                                                                               | whois.amnic.net                  |
+| .as                                                                                                                                                                                                                                                                                                                                                                               | whois.nic.as                     |
+| .at, .ac.at, .co.at, .gv.at, .or.at                                                                                                                                                                                                                                                                                                                                               | whois.nic.at                     |
+| .asn.au, .com.au, .edu.au, .org.au, .net.au, .id.au                                                                                                                                                                                                                                                                                                                               | domaincheck.auda.org.au          |
+| .be, .ac.be                                                                                                                                                                                                                                                                                                                                                                       | whois.dns.be                     |
+| .br, .adm.br, .adv.br, .am.br, .arq.br, .art.br, .bio.br, .cng.br, .cnt.br, .com.br, .ecn.br, .eng.br, .esp.br, .etc.br, .eti.br, .fm.br, .fot.br, .fst.br, .g12.br, .gov.br, .ind.br, .inf.br, .jor.br, .lel.br, .med.br, .mil.br, .net.br, .nom.br, .ntr.br, .odo.br, .org.br, .ppg.br, .pro.br, .psc.br, .psi.br, .rec.br, .slg.br, .tmp.br, .tur.br, .tv.br, .vet.br, .zlg.br | whois.nic.br                     |
+| .ca                                                                                                                                                                                                                                                                                                                                                                               | whois.cira.ca                    |
+| .cc                                                                                                                                                                                                                                                                                                                                                                               | whois.nic.cc                     |
+
+
+
 ## :balance_scale: License
 
 [MIT](https://choosealicense.com/licenses/mit/)
@@ -62,3 +97,4 @@ For support, email dev@monovm.com.
 
 
 ![Logo](https://monovm.com/site-assets/images/logo-monovm.svg)
+
