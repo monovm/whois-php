@@ -11,7 +11,7 @@ This PHP package enables developers to retrieve domain registration information 
 You can install the package via composer:
 
 ```bash
-  composer require monovm/whois-php
+composer require monovm/whois-php
 ```
 
 ## Usage/Examples
