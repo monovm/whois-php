@@ -26,7 +26,7 @@ jobs:
         run: composer install --prefer-dist --no-interaction
 
       - name: PHP Code Sniffer
-        run: vendor/bin/phpcs
+        run: vendor/bin/phpcs --standard=PSR12  src/
 
       - name: PHP Code Sniffer - Fix
         run: vendor/bin/phpcbf --standard=PSR12 src/
