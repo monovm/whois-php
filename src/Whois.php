@@ -8,15 +8,10 @@ class Whois
 {
     protected $definitions = [];
 
-    protected $definitionsPath = null;
-
     protected $socketPrefix = 'socket://';
 
-    public function __construct($definitionsPath = '')
+    public function __construct()
     {
-        if (!empty($definitionsPath)) {
-            $this->definitionsPath = $definitionsPath;
-        }
         $this->load();
     }
 
@@ -167,7 +162,6 @@ class Whois
                     $domain,
                     $uri,
                     $port,
-                    $tld,
                 );
             } else {
                 $lookupResult = $this->httpWhoisLookup($domain, $uri);
