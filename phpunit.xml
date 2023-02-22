@@ -1,0 +1,7 @@
+<phpunit>
+    <coverage>
+        <include>
+            <directory>src/</directory>
+        </include>
+    </coverage>
+</phpunit>
