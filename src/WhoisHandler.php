@@ -20,7 +20,7 @@ class WhoisHandler
             $this->sld = $domainParts[0];
             $this->tld = '.' . $domainParts[1];
 
-            $whois = new WHOIS();
+            $whois = new Whois();
 
             if ($whois->canLookup($this->tld)) {
                 $result = $whois->lookup(['sld' => $this->sld, 'tld' => $this->tld]);

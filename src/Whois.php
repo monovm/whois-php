@@ -4,7 +4,7 @@ namespace MonoVM\WhoisPhp;
 
 use Exception;
 
-class WHOIS
+class Whois
 {
     protected $definitions = [];
 
