@@ -1,12 +1,12 @@
 
-# Simple and Fast Domain Lookup in PHP
+# :zap: Simple and Fast Domain Lookup in PHP :zap:
 
 This PHP package enables developers to retrieve domain registration information and check domain availability via socket protocol. It's a useful tool for web developers and domain name registrars.
 
 
 
 
-## Installation
+## :scroll: Installation
 
 You can install the package via composer:
 
@@ -14,7 +14,7 @@ You can install the package via composer:
 composer require monovm/whois-php
 ```
 
-## Usage/Examples
+## :mortar_board: Usage/Examples
 
 ```PHP
 use MonoVM\WhoisPhp\WhoisHandler;
@@ -51,12 +51,12 @@ $tld = $whoisHandler->getTld();
 ```PHP
 $sld = $whoisHandler->getSld();
 ```
-## License
+## :balance_scale: License
 
 [MIT](https://choosealicense.com/licenses/mit/)
 
 
-## Support
+## :computer: Support
 
 For support, email dev@monovm.com.
 
