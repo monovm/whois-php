@@ -39,7 +39,7 @@ class Whois
                     }
                 }
             } else {
-                return throw new Exception('dist.whois.json file not found!');
+                throw new Exception('dist.whois.json file not found!');
             }
         }
 

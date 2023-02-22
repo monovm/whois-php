@@ -32,4 +32,4 @@ jobs:
         run: vendor/bin/phpcbf --standard=PSR12 src/
 
       - name: Run Tests
-        run: vendor/bin/phpunit --coverage-text
+        run: vendor/bin/phpunit tests/
