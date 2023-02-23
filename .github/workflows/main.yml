@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3.0.0
+        uses: actions/checkout@v3.3.0
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -24,12 +24,12 @@ jobs:
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction
+        
+      - name: PHP Code Sniffer - Fix
+        run: vendor/bin/phpcbf --standard=PSR12 src/
 
       - name: PHP Code Sniffer
         run: vendor/bin/phpcs --standard=PSR12  src/
-
-      - name: PHP Code Sniffer - Fix
-        run: vendor/bin/phpcbf --standard=PSR12 src/
 
       - name: Run Tests
         run: vendor/bin/phpunit tests/
