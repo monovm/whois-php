@@ -95,6 +95,7 @@ $sld = $whoisHandler->getSld();
 
 For support, email dev@monovm.com.
 
+[MonoVM.com](https://monovm.com)
 
 ![Logo](https://monovm.com/site-assets/images/logo-monovm.svg)
 
