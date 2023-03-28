@@ -17,7 +17,9 @@ class Checker extends Whois
 
         if (isset($options['popularTLDs']) && is_array($options['popularTLDs'])) {
             $this->popularTLDs = array_map(function ($tld) {
-                if (strpos($tld, '.') === 0) return $tld;
+                if (strpos($tld, '.') === 0) {
+                    return $tld;
+                }
                 return '.' . $tld;
             }, $options['popularTLDs']);
         }
@@ -39,7 +41,9 @@ class Checker extends Whois
     public static function whois($domains, array $options = []): array
     {
 
-        if (is_string($domains)) $domains = [$domains];
+        if (is_string($domains)) {
+            $domains = [$domains];
+        }
 
         $results = [];
         array_map(function ($domain) use (&$results, $options) {
@@ -61,7 +65,6 @@ class Checker extends Whois
         $tldsToLoop = $parts['tld'] ? [$parts['tld']] : $this->popularTLDs;
         $results = [];
         foreach ($tldsToLoop as $tld) {
-
             if (!parent::canLookup($tld)) {
                 $results[$this->getDomainNameFromParts($parts)] = 'invalid';
                 continue;
