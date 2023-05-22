@@ -531,7 +531,7 @@
         "available": "not exist"
     },
     {
-        "extensions": ".ir",
+        "extensions": ".ir,.co.ir",
         "uri": "socket://whois.nic.ir",
         "available": "no entries found"
     },
@@ -1419,5 +1419,10 @@
         "extensions": ".dev",
         "uri": "socket://whois.nic.google",
         "available": "Domain not found"
+    },
+    {
+        "extensions": ".co.com",
+        "uri": "socket://whois.co.com",
+        "available": "DOMAIN NOT FOUND"
     }
 ]
