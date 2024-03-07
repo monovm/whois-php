@@ -175,7 +175,7 @@ class Whois
         }
         $lookupResult = ' ---' . $lookupResult;
         $results = [];
-        if (strpos($lookupResult, strtolower($availableMatchString)) !== false) {
+        if (strpos(strtolower($lookupResult), strtolower($availableMatchString)) !== false) {
             $results['result'] = 'available';
         } else {
             $results['result'] = 'unavailable';
