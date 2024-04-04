@@ -60,7 +60,7 @@
         "available": "nothing found"
     },
     {
-        "extensions": ".asn.au,.com.au,.edu.au,.org.au,.net.au,.id.au",
+        "extensions": ".au,.asn.au,.com.au,.edu.au,.org.au,.net.au,.id.au",
         "uri": "socket://domaincheck.auda.org.au",
         "available": "---Available"
     },
@@ -128,7 +128,7 @@
     {
         "extensions": ".fr,.tm.fr,.com.fr,.asso.fr,.presse.fr",
         "uri": "socket://whois.nic.fr",
-        "available": "No entries found"
+        "available": "NOT FOUND"
     },
     {
         "extensions": ".gf",
@@ -262,7 +262,7 @@
     },
     {
         "extensions": ".to",
-        "uri": "socket://monarch.tonic.to",
+        "uri": "socket://whois.tonic.to",
         "available": "No match for"
     },
     {
@@ -422,8 +422,8 @@
     },
     {
         "extensions": ".co.nz,.org.nz,.net.nz,.maori.nz,.iwi.nz,.ac.nz,.kiwi.nz,.geek.nz,.gen.nz,.school.nz,.nz",
-        "uri": "socket://whois.srs.net.nz",
-        "available": "220 Available"
+        "uri": "socket://whois.irs.net.nz",
+        "available": "Not found"
     },
     {
         "extensions": ".io",
@@ -483,7 +483,7 @@
     {
         "extensions": ".tv",
         "uri": "socket://whois.nic.tv",
-        "available": "No match for"
+        "available": "No Data Found"
     },
     {
         "extensions": ".pt,.com.pt,.edu.pt",
@@ -531,7 +531,7 @@
         "available": "not exist"
     },
     {
-        "extensions": ".ir,.co.ir",
+        "extensions": ".ir",
         "uri": "socket://whois.nic.ir",
         "available": "no entries found"
     },
@@ -588,7 +588,7 @@
     {
         "extensions": ".yt",
         "uri": "socket://whois.nic.yt",
-        "available": "No entries found"
+        "available": "NOT FOUND"
     },
     {
         "extensions": ".xxx",
@@ -807,7 +807,7 @@
     },
     {
         "extensions": ".co.zw",
-        "uri": "http://zispa.co.zw/cgi-bin/domain_lookup.pl?s=",
+        "uri": "http://zispa.org.zw/cgi-bin/domain_lookup.pl?s=",
         "available": "is available for registration"
     },
     {
@@ -1421,8 +1421,8 @@
         "available": "Domain not found"
     },
     {
-        "extensions": ".co.com",
-        "uri": "socket://whois.co.com",
-        "available": "DOMAIN NOT FOUND"
+        "extensions": ".nyc",
+        "uri": "socket://whois.nic.nyc",
+        "available": "No Data Found"
     }
 ]
