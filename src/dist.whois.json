@@ -231,9 +231,9 @@
         "available": "No entries found"
     },
     {
-        "extensions": ".com.sg,.org.sg,.net.sg,.gov.sg,.sg,.edu.sg",
+        "extensions": ".com.sg,.org.sg,.net.sg,.gov.sg,.sg,.edu.sg,.sg",
         "uri": "socket://whois.sgnic.sg",
-        "available": "Domain Not Found"
+        "available": "---Not found"
     },
     {
         "extensions": ".sk",
@@ -573,7 +573,7 @@
     {
         "extensions": ".re",
         "uri": "socket://whois.nic.re",
-        "available": "No entries found"
+        "available": "NOT FOUND"
     },
     {
         "extensions": ".pm",
@@ -1153,7 +1153,7 @@
     {
         "extensions": ".rest",
         "uri": "socket://whois.nic.rest",
-        "available": "DOMAIN NOT FOUND"
+        "available": "is available for registration"
     },
     {
         "extensions": ".review",
