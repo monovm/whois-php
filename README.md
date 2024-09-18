@@ -40,14 +40,14 @@ An associative array with domains as keys and status as values.
 $result1: ['monovm.com'=>'unavailable']
 $result2: ['monovm.com'=>'unavailable','monovm.net'=>'unavailable','monovm.org'=>'unavailable','monovm.info'=>'unavailable']
 $result3: [
-            'monovm.com'=>'unavailable',
+            'monovm.com'=>'premium',
             'monovm.net'=>'unavailable',
             'monovm.org'=>'unavailable',
             'monovm.info'=>'unavailable',
-            'google.com'=>'unavailable',
+            'google.com'=>'premium',
             'bing.com'=>'unavailable',
             'bing.net'=>'unavailable',
-            'bing.org'=>'unavailable',
+            'bing.org'=>'available',
             'bing.info'=>'unavailable'
            ]
 ```
