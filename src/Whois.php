@@ -95,6 +95,14 @@ class Whois
         throw new Exception('Whois server not known for ' . $tld);
     }
 
+    protected function getPremiumMatchString($tld)
+    {
+        if ($this->canLookup($tld)) {
+            return $this->getFromDefinitions($tld, 'premium');
+        }
+        throw new Exception('Whois server not known for ' . $tld);
+    }
+
     protected function httpWhoisLookup($domain, $uri)
     {
         $url = $uri . $domain;
@@ -144,6 +152,7 @@ class Whois
         try {
             $uri = $this->getUri($tld);
             $availableMatchString = $this->getAvailableMatchString($tld);
+            $premiumMatchString = $this->getPremiumMatchString($tld);
             $isSocketLookup = $this->isSocketLookup($tld);
         } catch (Exception $e) {
             return false;
@@ -177,6 +186,8 @@ class Whois
         $results = [];
         if (strpos(strtolower($lookupResult), strtolower($availableMatchString)) !== false) {
             $results['result'] = 'available';
+        } else if (strpos(strtolower($lookupResult), strtolower($premiumMatchString)) !== false) {
+            $results['result'] = 'premium';
         } else {
             $results['result'] = 'unavailable';
             if ($isSocketLookup) {

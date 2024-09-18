@@ -533,6 +533,7 @@
     {
         "extensions": ".ir",
         "uri": "socket://whois.nic.ir",
+        "premium": "under certain conditions",
         "available": "no entries found"
     },
     {
