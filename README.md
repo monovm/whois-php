@@ -35,6 +35,7 @@ $result3 = Checker::whois(['monovm','google.com','bing']);
 - ### Response
 
 An associative array with domains as keys and status as values.
+Current statuses: available, unavailable, premium
 
 ```code
 $result1: ['monovm.com'=>'unavailable']
