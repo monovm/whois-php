@@ -186,7 +186,7 @@ class Whois
         $results = [];
         if (strpos(strtolower($lookupResult), strtolower($availableMatchString)) !== false) {
             $results['result'] = 'available';
-        } else if (strpos(strtolower($lookupResult), strtolower($premiumMatchString)) !== false) {
+        } else if ($premiumMatchString && strpos(strtolower($lookupResult), strtolower($premiumMatchString)) !== false) {
             $results['result'] = 'premium';
         } else {
             $results['result'] = 'unavailable';
