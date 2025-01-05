@@ -1,4 +1,4 @@
-# :zap: Simple and Fast Domain Lookup in PHP :zap:
+# :zap: Simple and Fast Domain Whois Lookup in PHP :zap:
 
 This PHP package enables developers to retrieve domain registration information and check domain availability via socket
 protocol. It's a useful tool for web developers and domain name registrars.
