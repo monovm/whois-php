@@ -9,7 +9,7 @@ based on WHMCS domain Whois class.
 
 ## :scroll: Installation
 
-You can install the package via composer:
+You can install the whois package via composer:
 
 ```bash
 composer require monovm/whois-php
