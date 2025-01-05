@@ -134,6 +134,9 @@ $sld = $whoisHandler->getSld();
 ## :globe_with_meridians: Whois Server List
 ### Almost all TLDs are supported.
 
+## :Contributing
+If you want to add support for new TLD, extend functionality or correct a bug, feel free to create a new pull request at Github's repository
+
 ## :balance_scale: License
 
 [MIT](https://choosealicense.com/licenses/mit/)
