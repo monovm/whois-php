@@ -1154,7 +1154,7 @@
     {
         "extensions": ".rest",
         "uri": "socket://whois.nic.rest",
-        "available": "is available for registration"
+        "available": "DOMAIN NOT FOUND"
     },
     {
         "extensions": ".review",
@@ -1425,5 +1425,10 @@
         "extensions": ".nyc",
         "uri": "socket://whois.nic.nyc",
         "available": "No Data Found"
+    },
+    {
+        "extensions": ".it.com",
+        "uri": "socket://whois.it.com",
+        "available": "No match for"
     }
 ]
