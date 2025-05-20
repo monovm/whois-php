@@ -1,13 +1,15 @@
-# :zap: Simple and Fast Domain Lookup in PHP :zap:
+# :zap: Simple and Fast Domain Whois Lookup in PHP :zap:
 
-This PHP package enables developers to retrieve domain registration information and check domain availability via socket
+Simple and Fast Domain Whois Lookup in PHP
+
+This PHP whois package enables developers to retrieve domain registration information and check domain availability via socket
 protocol. It's a useful tool for web developers and domain name registrars.
 
-based on WHMCS Whois class.
+based on WHMCS domain Whois class.
 
 ## :scroll: Installation
 
-You can install the package via composer:
+You can install the whois package via composer:
 
 ```bash
 composer require monovm/whois-php
@@ -131,6 +133,9 @@ $sld = $whoisHandler->getSld();
 
 ## :globe_with_meridians: Whois Server List
 ### Almost all TLDs are supported.
+
+## :globe_with_meridians: Contributing
+If you want to add support for new TLD, extend functionality or correct a bug, feel free to create a new pull request at Github's repository
 
 ## :balance_scale: License
 
