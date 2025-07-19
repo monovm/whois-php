@@ -531,7 +531,7 @@
         "available": "not exist"
     },
     {
-        "extensions": ".ir",
+        "extensions": ".ir,.co.ir,.ac.ir,.sch.ir,.ir",
         "uri": "socket://whois.nic.ir",
         "premium": "under certain conditions",
         "available": "no entries found"
