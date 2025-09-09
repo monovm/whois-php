@@ -14,6 +14,11 @@ class AvailabilityDetector
             return true;
         }
 
+        // Early check: If domain contains clear registration indicators, it's NOT available
+        if (self::containsRegistrationIndicators($whoisMessage, $tld)) {
+            return false;
+        }
+
         // Method 2: Check for availability keywords in the response
         if (self::containsAvailabilityKeywords($whoisMessage)) {
             return true;
@@ -49,6 +54,7 @@ class AvailabilityDetector
     {
         return [
             'original_library_result' => $originalResult,
+            'contains_registration_indicators' => self::containsRegistrationIndicators($whoisMessage, $tld),
             'contains_availability_keywords' => self::containsAvailabilityKeywords($whoisMessage),
             'is_response_too_short' => self::isResponseTooShort($whoisMessage),
             'contains_no_match_patterns' => self::containsNoMatchPatterns($whoisMessage),
@@ -70,7 +76,6 @@ class AvailabilityDetector
             'not found',
             'no data found',
             'no entries found',
-            'available',
             'available for registration',
             'domain status: available',
             'no matching record',
@@ -107,15 +112,89 @@ class AvailabilityDetector
             'not found...',
         ];
 
-        $lowerMessage = strtolower($whoisMessage);
+        // Filter out comment lines and informational text
+        $lines = explode("\n", $whoisMessage);
+        $relevantLines = [];
+        
+        foreach ($lines as $line) {
+            $line = trim($line);
+            // Skip comment lines, empty lines, and informational lines
+            if (empty($line) || 
+                str_starts_with($line, '%') || 
+                str_starts_with($line, '#') || 
+                str_starts_with($line, ';') ||
+                str_starts_with($line, '>>>') ||
+                str_starts_with($line, '---') ||
+                stripos($line, 'available on web at') !== false ||
+                stripos($line, 'find the terms and conditions') !== false) {
+                continue;
+            }
+            $relevantLines[] = $line;
+        }
+        
+        $filteredMessage = strtolower(implode(' ', $relevantLines));
 
         foreach ($availabilityKeywords as $keyword) {
-            if (strpos($lowerMessage, strtolower($keyword)) !== false) {
+            if (strpos($filteredMessage, strtolower($keyword)) !== false) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Check for clear registration indicators that mean domain is NOT available
+     */
+    private static function containsRegistrationIndicators(string $whoisMessage, string $tld = ''): bool
+    {
+        $lowerMessage = strtolower($whoisMessage);
+        
+        // Strong indicators that domain is registered
+        $registrationIndicators = [
+            'domain:',
+            'ascii:',
+            'nserver:',
+            'nameserver:',
+            'name server:',
+            'registrar:',
+            'registrant:',
+            'creation date:',
+            'created:',
+            'expiry date:',
+            'expires:',
+            'updated:',
+            'last updated:',
+            'admin contact:',
+            'technical contact:',
+            'billing contact:',
+            'registry domain id:',
+            'registrar whois server:',
+            'domain status: client',
+            'dnssec:',
+        ];
+
+        $foundIndicators = 0;
+        foreach ($registrationIndicators as $indicator) {
+            if (strpos($lowerMessage, $indicator) !== false) {
+                $foundIndicators++;
+            }
+        }
+
+        // For .ir domains, be extra careful - if we see domain: and nserver: it's definitely registered
+        if ($tld === '.ir') {
+            if (strpos($lowerMessage, 'domain:') !== false && strpos($lowerMessage, 'nserver:') !== false) {
+                return true;
+            }
+        }
+
+        // For .de domains, "Status: connect" means registered
+        if ($tld === '.de' && strpos($lowerMessage, 'status: connect') !== false) {
+            return true;
+        }
+
+        // If we find 3 or more registration indicators, it's likely registered
+        return $foundIndicators >= 3;
     }
 
     /**
@@ -228,6 +307,8 @@ class AvailabilityDetector
             '.hk' => ['/the\s+domain\s+has\s+not\s+been\s+registered/i'],
             '.im' => ['/was\s+not\s+found/i'],
             '.ec' => ['/404/i'], // RDAP server
+            '.ir' => ['/no\s+entries\s+found/i'],
+            '.de' => ['/is\s+available\s+for\s+registration/i'],
         ];
 
         if (isset($tldPatterns[$tld])) {
