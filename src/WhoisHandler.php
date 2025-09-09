@@ -63,11 +63,12 @@ class WhoisHandler
     }
 
     /**
-     * Determines if the domain is available for registration.
+     * Determines if the domain is available for registration using multiple detection methods.
      */
     public function isAvailable(): bool
     {
-        return $this->isAvailable;
+        // Use enhanced availability detection
+        return $this->isDomainAvailableEnhanced();
     }
 
     /**
@@ -84,5 +85,21 @@ class WhoisHandler
     public function getWhoisMessage(): string
     {
         return $this->whoisMessage;
+    }
+
+    /**
+     * Enhanced domain availability detection using multiple methods
+     */
+    private function isDomainAvailableEnhanced(): bool
+    {
+        return AvailabilityDetector::isAvailable($this->whoisMessage, $this->tld, $this->isAvailable);
+    }
+
+    /**
+     * Get detailed availability information for debugging
+     */
+    public function getAvailabilityDetails(): array
+    {
+        return AvailabilityDetector::getAvailabilityDetails($this->whoisMessage, $this->tld, $this->isAvailable);
     }
 }

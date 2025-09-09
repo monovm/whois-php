@@ -86,15 +86,21 @@ $whoisHandler = WhoisHandler::whois('monovm.com');
 
 | Method        | Description                                                                                                      |
 |---------------|------------------------------------------------------------------------------------------------------------------|
-| `isAvailable` | Returns true if the domain is available for registration                                                         |
+| `isAvailable` | Returns true if the domain is available for registration (uses enhanced detection)                               |
 | `isValid`     | Returns true if the domain can be looked up                                                                      |
 | `getWhoisMessage` | Returns the whois server message as a string including availability, validation or the domain whois information  |
 | `getTld`      | Returns the top level domain of the entered domain as a string                                                   |
 | `getSld`      | Returns the second level domain of the entered domain as a string                                                |
+| `getAvailabilityDetails` | Returns detailed information about how availability was determined (debug method)                        |
 
-:green_circle: `isAvailable()` method takes a single parameter, the domain name, as a string value. If the domain is
-available for registration, the method returns a boolean true value. If the domain is already registered, the method
-returns a boolean false value.
+:green_circle: `isAvailable()` method uses enhanced detection with multiple methods to accurately determine domain availability. It combines the original library's built-in check with additional detection methods including:
+
+- **Availability keywords detection**: Searches for phrases like "no match", "not found", "available", etc.
+- **Response length analysis**: Short responses often indicate availability
+- **Pattern matching**: Uses regex patterns to identify availability indicators
+- **TLD-specific patterns**: Different TLDs use different availability messages
+- **Domain status indicators**: Checks for explicit status fields
+- **Registration field analysis**: Absence of registration details may indicate availability
 
 ```PHP
 $available = $whoisHandler->isAvailable();
@@ -130,6 +136,39 @@ domain is "monovm".
 ```PHP
 $sld = $whoisHandler->getSld();
 ```
+
+:green_circle: `getAvailabilityDetails()` method provides detailed debugging information about how the domain availability was determined. This method returns an array containing the results of each detection method:
+
+```PHP
+$details = $whoisHandler->getAvailabilityDetails();
+
+// Example output:
+// Array
+// (
+//     [original_library_result] => false
+//     [contains_availability_keywords] => true
+//     [is_response_too_short] => false
+//     [contains_no_match_patterns] => true
+//     [tld_specific_patterns] => false
+//     [domain_status_indicators] => false
+//     [final_availability] => true
+//     [whois_message_length] => 1234
+//     [whois_message_preview] => "No match for domain example123.com..."
+// )
+```
+
+## :sparkles: Enhanced Availability Detection
+
+The enhanced availability detection system uses 6 different methods to ensure accurate results:
+
+1. **Original Library Check**: Uses the built-in whois server response analysis
+2. **Keyword Detection**: Searches for over 40 availability-related keywords in multiple languages
+3. **Response Length Analysis**: Analyzes response size and meaningful content lines
+4. **Pattern Matching**: Uses regex patterns to identify availability indicators
+5. **TLD-Specific Patterns**: Applies specialized patterns for different TLDs (.com, .uk, .de, etc.)
+6. **Status Indicators**: Checks for explicit domain status fields and registration data presence
+
+This multi-layered approach significantly improves accuracy across different WHOIS servers and TLD registries.
 
 ## :globe_with_meridians: Whois Server List
 ### Almost all TLDs are supported.

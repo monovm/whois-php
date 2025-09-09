@@ -184,9 +184,17 @@ class Whois
         }
         $lookupResult = ' ---' . $lookupResult;
         $results = [];
-        if (strpos(strtolower($lookupResult), strtolower($availableMatchString)) !== false) {
+        
+        // First check using original logic for backward compatibility
+        $originalAvailable = strpos(strtolower($lookupResult), strtolower($availableMatchString)) !== false;
+        $isPremium = $premiumMatchString && strpos(strtolower($lookupResult), strtolower($premiumMatchString)) !== false;
+        
+        // Use enhanced detection for better accuracy
+        $enhancedAvailable = AvailabilityDetector::isAvailable($lookupResult, $tld, $originalAvailable);
+        
+        if ($enhancedAvailable) {
             $results['result'] = 'available';
-        } else if ($premiumMatchString && strpos(strtolower($lookupResult), strtolower($premiumMatchString)) !== false) {
+        } else if ($isPremium) {
             $results['result'] = 'premium';
         } else {
             $results['result'] = 'unavailable';

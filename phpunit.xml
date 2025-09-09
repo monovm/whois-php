@@ -1,4 +1,9 @@
-<phpunit>
+<phpunit bootstrap="vendor/autoload.php">
+    <testsuites>
+        <testsuite name="WhoisPhp Test Suite">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
     <coverage>
         <include>
             <directory>src/</directory>
