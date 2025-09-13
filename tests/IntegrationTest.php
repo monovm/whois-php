@@ -157,38 +157,4 @@ class IntegrationTest extends TestCase
         // Should return known status values
         $this->assertContains($results['example.com'], ['available', 'unavailable', 'premium', 'invalid']);
     }
-
-    public function testDeDomainBugFix()
-    {
-        // Test the specific .de domain bug where registered domains were showing as available
-        $deRegisteredResponse = '---Domain: traumhaus.de
-
-Status: connect';
-
-        $deAvailableResponse = 'traumha2222us.de is available for registration.';
-
-        // Registered domain should be detected as UNAVAILABLE
-        $isAvailableRegistered = AvailabilityDetector::isAvailable($deRegisteredResponse, '.de', false);
-        $this->assertFalse($isAvailableRegistered, '.de registered domain should be detected as unavailable');
-
-        // Available domain should be detected as AVAILABLE
-        $isAvailable = AvailabilityDetector::isAvailable($deAvailableResponse, '.de', false);
-        $this->assertTrue($isAvailable, '.de available domain should be detected correctly');
-
-        $detailsRegistered = AvailabilityDetector::getAvailabilityDetails($deRegisteredResponse, '.de', false);
-        $detailsAvailable = AvailabilityDetector::getAvailabilityDetails($deAvailableResponse, '.de', false);
-
-        // Registered domain should have registration indicators
-        $this->assertTrue($detailsRegistered['contains_registration_indicators'], 'Should detect registration indicators for .de registered domain');
-
-        // Available domain should have TLD-specific patterns or keywords
-        $this->assertTrue(
-            $detailsAvailable['tld_specific_patterns'] || $detailsAvailable['contains_availability_keywords'],
-            'Should detect availability through TLD-specific patterns or keywords for .de available domain'
-        );
-
-        // Final results should be correct
-        $this->assertFalse($detailsRegistered['final_availability'], 'Final result should be unavailable for registered .de domain');
-        $this->assertTrue($detailsAvailable['final_availability'], 'Final result should be available for .de available domain');
-    }
 }

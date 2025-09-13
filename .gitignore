@@ -2,3 +2,4 @@
 .idea
 .phpunit.result.cache
 .github
+test_domain.php
