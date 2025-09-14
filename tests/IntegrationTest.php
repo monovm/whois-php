@@ -155,6 +155,53 @@ class IntegrationTest extends TestCase
         $this->assertArrayHasKey('example.com', $results);
         
         // Should return known status values
-        $this->assertContains($results['example.com'], ['available', 'unavailable', 'premium', 'invalid']);
+        $this->assertContains($results['example.com'], ['available', 'unavailable', 'premium', 'invalid']);                                                     
+    }
+
+    public function testUnsupportedTldDetection()
+    {
+        // Test various unsupported TLD messages
+        $unsupportedMessages = [
+            'TLD is not supported',
+            'The domain extension .test is not supported by this WHOIS server',
+            'Whois server not known for .example',
+            'No WHOIS server available for this TLD',
+            'Unsupported domain extension: .internal',
+            'Extension not supported',
+            'WHOIS SERVER NOT KNOWN',
+        ];
+
+        foreach ($unsupportedMessages as $message) {
+            // Should throw exception when detecting unsupported TLD
+            try {
+                AvailabilityDetector::isAvailable($message, '.test', false);
+                $this->fail('Expected exception for unsupported TLD message: ' . $message);
+            } catch (\Exception $e) {
+                $this->assertEquals('TLD is not supported by the WHOIS server', $e->getMessage());
+            }
+        }
+
+        // Test that normal messages don't trigger unsupported TLD detection
+        $normalMessages = [
+            'This is a very short response',
+            'google.com is available for registration.',
+            'Domain not found',
+            'No match for domain',
+        ];
+
+        foreach ($normalMessages as $message) {
+            // Should not throw exception for normal messages
+            try {
+                $result = AvailabilityDetector::isAvailable($message, '.com', false);
+                $this->assertTrue(true, 'Normal message should not throw exception');
+            } catch (\Exception $e) {
+                $this->fail('Normal message should not throw unsupported TLD exception: ' . $e->getMessage());
+            }
+        }
+
+        // Test getAvailabilityDetails with unsupported TLD
+        $details = AvailabilityDetector::getAvailabilityDetails('TLD is not supported', '.test', false);
+        $this->assertTrue($details['contains_unsupported_tld_messages'], 'Should detect unsupported TLD messages');
+        $this->assertEquals('unsupported_tld', $details['final_availability'], 'Final availability should be unsupported_tld');
     }
 }

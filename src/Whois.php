@@ -190,7 +190,14 @@ class Whois
         $isPremium = $premiumMatchString && strpos(strtolower($lookupResult), strtolower($premiumMatchString)) !== false;
         
         // Use enhanced detection for better accuracy
-        $enhancedAvailable = AvailabilityDetector::isAvailable($lookupResult, $tld, $originalAvailable);
+        try {
+            $enhancedAvailable = AvailabilityDetector::isAvailable($lookupResult, $tld, $originalAvailable);
+        } catch (\Exception $e) {
+            // If TLD is not supported, return error result
+            $results['result'] = 'error';
+            $results['errordetail'] = $e->getMessage();
+            return $results;
+        }
         
         if ($enhancedAvailable) {
             $results['result'] = 'available';

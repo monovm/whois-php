@@ -14,37 +14,42 @@ class AvailabilityDetector
             return true;
         }
 
-        // PRIORITY 1: Check for explicit UNAVAILABILITY indicators (highest priority)
+        // PRIORITY 1: Check for unsupported TLD messages (highest priority)
+        if (self::containsUnsupportedTldMessages($whoisMessage)) {
+            throw new \Exception('TLD is not supported by the WHOIS server');
+        }
+
+        // PRIORITY 2: Check for explicit UNAVAILABILITY indicators
         if (self::containsUnavailabilityIndicators($whoisMessage, $tld)) {
             return false;
         }
 
-        // PRIORITY 2: If domain contains clear registration indicators, it's NOT available
+        // PRIORITY 3: If domain contains clear registration indicators, it's NOT available
         if (self::containsRegistrationIndicators($whoisMessage, $tld)) {
             return false;
         }
 
-        // PRIORITY 3: Check for availability keywords in the response
+        // PRIORITY 4: Check for availability keywords in the response
         if (self::containsAvailabilityKeywords($whoisMessage)) {
             return true;
         }
 
-        // PRIORITY 4: Check for "No match" or similar patterns
+        // PRIORITY 5: Check for "No match" or similar patterns
         if (self::containsNoMatchPatterns($whoisMessage)) {
             return true;
         }
 
-        // PRIORITY 5: Check for TLD-specific availability patterns
+        // PRIORITY 6: Check for TLD-specific availability patterns
         if (!empty($tld) && self::checkTldSpecificPatterns($whoisMessage, $tld)) {
             return true;
         }
 
-        // PRIORITY 6: Check if the response is too short/empty (likely available)
-        if (self::isResponseTooShort($whoisMessage)) {
-            return true;
-        }
+        // // PRIORITY 7: Check if the response is too short/empty (likely available)
+        // if (self::isResponseTooShort($whoisMessage)) {
+        //     return true;
+        // }
 
-        // PRIORITY 7: Check for domain status indicators
+        // PRIORITY 8: Check for domain status indicators
         if (self::checkDomainStatusIndicators($whoisMessage)) {
             return true;
         }
@@ -57,8 +62,12 @@ class AvailabilityDetector
      */
     public static function getAvailabilityDetails(string $whoisMessage, string $tld = '', bool $originalResult = false): array
     {
+        // Check for unsupported TLD first
+        $containsUnsupportedTld = self::containsUnsupportedTldMessages($whoisMessage);
+        
         return [
             'original_library_result' => $originalResult,
+            'contains_unsupported_tld_messages' => $containsUnsupportedTld,
             'contains_unavailability_indicators' => self::containsUnavailabilityIndicators($whoisMessage, $tld),
             'contains_registration_indicators' => self::containsRegistrationIndicators($whoisMessage, $tld),
             'contains_availability_keywords' => self::containsAvailabilityKeywords($whoisMessage),
@@ -66,7 +75,7 @@ class AvailabilityDetector
             'contains_no_match_patterns' => self::containsNoMatchPatterns($whoisMessage),
             'tld_specific_patterns' => !empty($tld) ? self::checkTldSpecificPatterns($whoisMessage, $tld) : false,
             'domain_status_indicators' => self::checkDomainStatusIndicators($whoisMessage),
-            'final_availability' => self::isAvailable($whoisMessage, $tld, $originalResult),
+            'final_availability' => $containsUnsupportedTld ? 'unsupported_tld' : self::isAvailable($whoisMessage, $tld, $originalResult),
             'whois_message_length' => strlen($whoisMessage),
             'whois_message_preview' => substr($whoisMessage, 0, 200) . (strlen($whoisMessage) > 200 ? '...' : ''),
         ];
@@ -150,7 +159,63 @@ class AvailabilityDetector
     }
 
     /**
-     * Check for explicit UNAVAILABILITY indicators (highest priority)
+     * Check for unsupported TLD messages (highest priority)
+     */
+    private static function containsUnsupportedTldMessages(string $whoisMessage): bool
+    {
+        $lowerMessage = strtolower($whoisMessage);
+        
+        // Common patterns for unsupported TLD messages
+        $unsupportedPatterns = [
+            'tld is not supported',
+            'tld not supported',
+            'extension not supported',
+            'domain extension not supported',
+            'unsupported tld',
+            'unsupported domain extension',
+            'this tld is not supported',
+            'the tld is not supported',
+            'whois server not known',
+            'no whois server',
+            'whois service not available',
+            'not supported by this whois server',
+            'extension is not supported',
+            'domain type not supported',
+            'tld not available',
+            'extension not available',
+            'no server found for',
+            'server not found for',
+            'whois not available for',
+            'no whois available for',
+        ];
+        
+        foreach ($unsupportedPatterns as $pattern) {
+            if (strpos($lowerMessage, $pattern) !== false) {
+                return true;
+            }
+        }
+        
+        // Check for regex patterns
+        $unsupportedRegexPatterns = [
+            '/tld\s+(?:is\s+)?not\s+supported/i',
+            '/extension\s+(?:is\s+)?not\s+supported/i',
+            '/unsupported\s+(?:tld|extension|domain)/i',
+            '/no\s+whois\s+(?:server|service)\s+(?:available|found)/i',
+            '/whois\s+(?:server\s+)?not\s+(?:known|available|found)/i',
+            '/(?:server|service)\s+not\s+(?:available|found)\s+for/i',
+        ];
+        
+        foreach ($unsupportedRegexPatterns as $pattern) {
+            if (preg_match($pattern, $whoisMessage)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    /**
+     * Check for explicit UNAVAILABILITY indicators (high priority)
      */
     private static function containsUnavailabilityIndicators(string $whoisMessage, string $tld = ''): bool
     {

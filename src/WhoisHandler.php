@@ -24,11 +24,17 @@ class WhoisHandler
 
             if ($whois->canLookup($this->tld)) {
                 $result = $whois->lookup(['sld' => $this->sld, 'tld' => $this->tld]);
-                if ($result['result'] == 'available' && !isset($result['whois'])) {
+                if ($result === false || !is_array($result)) {
+                    $this->whoisMessage = 'WHOIS lookup failed for ' . $domain;
+                    $this->isValid = false;
+                } elseif (isset($result['result']) && $result['result'] === 'error') {
+                    $this->whoisMessage = $result['errordetail'] ?? 'WHOIS lookup error for ' . $domain;
+                    $this->isValid = false;
+                } elseif ($result['result'] == 'available' && !isset($result['whois'])) {
                     $this->whoisMessage = $domain . ' is available for registration.';
                     $this->isAvailable = true;
                 } else {
-                    $this->whoisMessage = $result['whois'];
+                    $this->whoisMessage = $result['whois'] ?? 'No WHOIS information available.';
                 }
             } else {
                 $this->whoisMessage =
@@ -92,7 +98,13 @@ class WhoisHandler
      */
     private function isDomainAvailableEnhanced(): bool
     {
-        return AvailabilityDetector::isAvailable($this->whoisMessage, $this->tld, $this->isAvailable);
+        try {
+            return AvailabilityDetector::isAvailable($this->whoisMessage, $this->tld, $this->isAvailable);
+        } catch (\Exception $e) {
+            // If TLD is not supported, mark as invalid and unavailable
+            $this->isValid = false;
+            return false;
+        }
     }
 
     /**
@@ -100,6 +112,25 @@ class WhoisHandler
      */
     public function getAvailabilityDetails(): array
     {
-        return AvailabilityDetector::getAvailabilityDetails($this->whoisMessage, $this->tld, $this->isAvailable);
+        try {
+            return AvailabilityDetector::getAvailabilityDetails($this->whoisMessage, $this->tld, $this->isAvailable);
+        } catch (\Exception $e) {
+            // Return details with unsupported TLD information
+            return [
+                'original_library_result' => $this->isAvailable,
+                'contains_unsupported_tld_messages' => true,
+                'contains_unavailability_indicators' => false,
+                'contains_registration_indicators' => false,
+                'contains_availability_keywords' => false,
+                'is_response_too_short' => false,
+                'contains_no_match_patterns' => false,
+                'tld_specific_patterns' => false,
+                'domain_status_indicators' => false,
+                'final_availability' => 'unsupported_tld',
+                'whois_message_length' => strlen($this->whoisMessage),
+                'whois_message_preview' => substr($this->whoisMessage, 0, 200) . (strlen($this->whoisMessage) > 200 ? '...' : ''),
+                'error_message' => $e->getMessage(),
+            ];
+        }
     }
 }
