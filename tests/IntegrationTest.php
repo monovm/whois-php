@@ -204,4 +204,39 @@ class IntegrationTest extends TestCase
         $this->assertTrue($details['contains_unsupported_tld_messages'], 'Should detect unsupported TLD messages');
         $this->assertEquals('unsupported_tld', $details['final_availability'], 'Final availability should be unsupported_tld');
     }
+
+    public function testRedemptionPeriodDetection()
+    {
+        // Test redemption period detection for .de domain
+        $redemptionResponse = " ---Domain: elitefollow.de<br />\nStatus: redemptionPeriod<br />";
+        
+        $isAvailable = AvailabilityDetector::isAvailable($redemptionResponse, '.de', false);
+        $this->assertFalse($isAvailable, 'Domain in redemption period should be detected as unavailable');
+        
+        $details = AvailabilityDetector::getAvailabilityDetails($redemptionResponse, '.de', false);
+        $this->assertTrue($details['contains_unavailability_indicators'], 'Should detect redemptionPeriod as unavailability indicator');
+        $this->assertFalse($details['final_availability'], 'Final result should be unavailable for redemption period domain');
+        
+        // Test other domain status that should be unavailable
+        $statusesToTest = [
+            'Status: redemptionPeriod',
+            'Status: redemption period',
+            'Status: redemption',
+            'Status: pendingDelete',
+            'Status: pending delete',
+            'Status: serverHold',
+            'Status: server hold',
+        ];
+        
+        foreach ($statusesToTest as $status) {
+            $response = " ---Domain: test.de<br />\n$status<br />";
+            $isAvailable = AvailabilityDetector::isAvailable($response, '.de', false);
+            $this->assertFalse($isAvailable, "Domain with '$status' should be detected as unavailable");
+        }
+        
+        // Test that normal registered status also works
+        $registeredResponse = " ---Domain: test.de<br />\nStatus: connect<br />";
+        $isAvailable = AvailabilityDetector::isAvailable($registeredResponse, '.de', false);
+        $this->assertFalse($isAvailable, 'Domain with Status: connect should be detected as unavailable');
+    }
 }
