@@ -567,11 +567,6 @@
         "available": "no est\u00e1 registrado"
     },
     {
-        "extensions": ".pro",
-        "uri": "socket:\/\/whois.nic.pro",
-        "available": "Domain not found"
-    },
-    {
         "extensions": ".re",
         "uri": "socket:\/\/whois.nic.re",
         "available": "NOT FOUND"
