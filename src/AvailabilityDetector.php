@@ -14,8 +14,22 @@ class AvailabilityDetector
             return true;
         }
 
-        // PRIORITY 1: Check for unsupported TLD messages (highest priority)
+        // PRIORITY 1: Check for unsupported TLD or server error messages (highest priority)
         if (self::containsUnsupportedTldMessages($whoisMessage)) {
+            // Determine the specific error type
+            $lowerMessage = strtolower($whoisMessage);
+            if (strpos($lowerMessage, 'server is busy') !== false || 
+                strpos($lowerMessage, 'server busy') !== false ||
+                strpos($lowerMessage, 'try again later') !== false ||
+                strpos($lowerMessage, 'temporarily unavailable') !== false ||
+                strpos($lowerMessage, 'rate limit') !== false ||
+                strpos($lowerMessage, 'too many requests') !== false ||
+                strpos($lowerMessage, 'quota exceeded') !== false ||
+                strpos($lowerMessage, 'timeout') !== false ||
+                strpos($lowerMessage, 'timed out') !== false ||
+                strpos($lowerMessage, 'connection') !== false) {
+                throw new \Exception('WHOIS server is temporarily unavailable or rate-limited. Please try again later.');
+            }
             throw new \Exception('TLD is not supported by the WHOIS server');
         }
 
@@ -159,13 +173,14 @@ class AvailabilityDetector
     }
 
     /**
-     * Check for unsupported TLD messages (highest priority)
+     * Check for unsupported TLD or server error messages (highest priority)
+     * This includes rate limiting, server busy, timeouts, etc.
      */
     private static function containsUnsupportedTldMessages(string $whoisMessage): bool
     {
         $lowerMessage = strtolower($whoisMessage);
         
-        // Common patterns for unsupported TLD messages
+        // Common patterns for unsupported TLD messages and server errors
         $unsupportedPatterns = [
             'tld is not supported',
             'tld not supported',
@@ -187,6 +202,19 @@ class AvailabilityDetector
             'server not found for',
             'whois not available for',
             'no whois available for',
+            'server is busy',
+            'server busy',
+            'please try again later',
+            'try again later',
+            'service temporarily unavailable',
+            'temporarily unavailable',
+            'rate limit exceeded',
+            'too many requests',
+            'quota exceeded',
+            'connection timed out',
+            'connection timeout',
+            'request timeout',
+            'timeout',
         ];
         
         foreach ($unsupportedPatterns as $pattern) {

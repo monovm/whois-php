@@ -239,4 +239,40 @@ class IntegrationTest extends TestCase
         $isAvailable = AvailabilityDetector::isAvailable($registeredResponse, '.de', false);
         $this->assertFalse($isAvailable, 'Domain with Status: connect should be detected as unavailable');
     }
+
+    public function testServerBusyAndRateLimitDetection()
+    {
+        // Test server busy and rate limit messages
+        $serverErrorMessages = [
+            'Server is busy now, please try again later.',
+            'Server busy, try again later',
+            'Please try again later',
+            'Service temporarily unavailable',
+            'Rate limit exceeded',
+            'Too many requests',
+            'Quota exceeded',
+            'Connection timed out',
+            'Request timeout',
+        ];
+        
+        foreach ($serverErrorMessages as $message) {
+            try {
+                AvailabilityDetector::isAvailable($message, '.shop', false);
+                $this->fail("Expected exception for server error message: $message");
+            } catch (\Exception $e) {
+                // Should throw an exception
+                $this->assertStringContainsString('unavailable', strtolower($e->getMessage()), 
+                    "Exception message should indicate unavailability for: $message");
+            }
+        }
+        
+        // Test that proper WHOIS responses still work
+        $validRegisteredResponse = "Domain Name: GOLDOZI.SHOP\nRegistrar: PDR Ltd.\nCreation Date: 2019-05-26\nName Server: AV1.7HOSTIR.COM";
+        $isAvailable = AvailabilityDetector::isAvailable($validRegisteredResponse, '.shop', false);
+        $this->assertFalse($isAvailable, 'Valid registered domain response should be detected as unavailable');
+        
+        $validAvailableResponse = "DOMAIN NOT FOUND";
+        $isAvailable = AvailabilityDetector::isAvailable($validAvailableResponse, '.shop', false);
+        $this->assertTrue($isAvailable, 'Valid available domain response should be detected as available');
+    }
 }
