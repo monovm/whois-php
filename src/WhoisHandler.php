@@ -73,6 +73,10 @@ class WhoisHandler
      */
     public function isAvailable(): bool
     {
+        // If the lookup is not valid (TLD not supported, error, etc.), domain availability is unknown
+        if (!$this->isValid) {
+            return false;
+        }
         // Use enhanced availability detection
         return $this->isDomainAvailableEnhanced();
     }
