@@ -414,6 +414,12 @@ class AvailabilityDetector
     {
         $lowerMessage = strtolower($whoisMessage);
 
+        // RDAP JSON response detection - if response contains RDAP-specific JSON keys,
+        // it's a registered domain (RDAP returns 404/error for unregistered domains)
+        if (self::isRdapRegisteredResponse($whoisMessage)) {
+            return true;
+        }
+
         // Strong indicators that domain is registered
         $registrationIndicators = [
             'domain:',
@@ -743,5 +749,40 @@ class AvailabilityDetector
 
         // If we find very few registration fields, domain might be available
         return $foundFields < 2;
+    }
+
+    /**
+     * Detect RDAP JSON responses indicating a registered domain.
+     * RDAP servers return structured JSON with specific keys for registered domains,
+     * and a 404 error response for unregistered domains.
+     */
+    private static function isRdapRegisteredResponse(string $whoisMessage): bool
+    {
+        // Check if response looks like RDAP JSON
+        if (strpos($whoisMessage, '"rdapConformance"') === false) {
+            return false;
+        }
+
+        // If it's an RDAP error response (404), domain is NOT registered
+        if (strpos($whoisMessage, '"errorCode"') !== false) {
+            return false;
+        }
+
+        // RDAP registered domain indicators - presence of these JSON keys means registered
+        $rdapRegistrationKeys = [
+            '"ldhName"',
+            '"nameservers"',
+            '"secureDNS"',
+            '"objectClassName"',
+        ];
+
+        $foundKeys = 0;
+        foreach ($rdapRegistrationKeys as $key) {
+            if (strpos($whoisMessage, $key) !== false) {
+                $foundKeys++;
+            }
+        }
+
+        return $foundKeys >= 2;
     }
 }

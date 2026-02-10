@@ -103,7 +103,9 @@ class WhoisHandler
     private function isDomainAvailableEnhanced(): bool
     {
         try {
-            return AvailabilityDetector::isAvailable($this->whoisMessage, $this->tld, $this->isAvailable);
+            // Decode HTML entities so the detector can parse raw content (e.g. RDAP JSON)
+            $rawMessage = html_entity_decode(strip_tags($this->whoisMessage), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            return AvailabilityDetector::isAvailable($rawMessage, $this->tld, $this->isAvailable);
         } catch (\Exception $e) {
             // If TLD is not supported, mark as invalid and unavailable
             $this->isValid = false;
@@ -117,7 +119,8 @@ class WhoisHandler
     public function getAvailabilityDetails(): array
     {
         try {
-            return AvailabilityDetector::getAvailabilityDetails($this->whoisMessage, $this->tld, $this->isAvailable);
+            $rawMessage = html_entity_decode(strip_tags($this->whoisMessage), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            return AvailabilityDetector::getAvailabilityDetails($rawMessage, $this->tld, $this->isAvailable);
         } catch (\Exception $e) {
             // Return details with unsupported TLD information
             return [

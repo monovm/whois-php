@@ -322,8 +322,8 @@
     },
     {
         "extensions": ".info,.blue,.kim,.pink,.black,.green,.lgbt,.poker,.red,.vote,.voto,.archi,.bio,.ski,.bet,.promo,.pet,.lotto",
-        "uri": "socket:\/\/whois.afilias.net",
-        "available": "Domain not found"
+        "uri": "https:\/\/rdap.identitydigital.services\/rdap\/domain\/",
+        "available": "Object not found"
     },
     {
         "extensions": ".ua",
