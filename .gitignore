@@ -3,3 +3,4 @@
 .phpunit.result.cache
 .github
 test_domain.php
+.claude
