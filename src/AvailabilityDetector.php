@@ -396,6 +396,15 @@ class AvailabilityDetector
             '/currently registered/i',
             '/is registered/i',
             '/registration:\s*registered/i',
+            // Registry restriction/reservation notices: the name exists but the
+            // registry withholds details (e.g. CIRA-backed .sx returns
+            // "Error code: 01044 ... usage restrictions applied" for reserved /
+            // restricted / premium names). These mean NOT available.
+            '/usage restrictions/i',
+            '/has usage restrictions applied/i',
+            '/name is reserved/i',
+            '/reserved domain/i',
+            '/domain is reserved/i',
         ];
 
         foreach ($generalUnavailabilityPatterns as $pattern) {
@@ -744,6 +753,32 @@ class AvailabilityDetector
         foreach ($registrationFields as $field) {
             if (strpos($lowerMessage, $field) !== false) {
                 $foundFields++;
+            }
+        }
+
+        // Absence of registration fields is NOT proof of availability: registry
+        // error/restriction notices (e.g. "Error code: ... usage restrictions")
+        // also contain no registration fields, yet the domain IS registered.
+        // Only treat a sparse response as available when it shows no error or
+        // restriction markers. Genuine availability is otherwise established by
+        // the explicit availability/no-match checks in earlier priorities.
+        $errorOrRestrictionMarkers = [
+            'error code:',
+            'error message:',
+            'usage restrictions',
+            'please see your registrar',
+            'please contact',
+            'is reserved',
+            'reserved name',
+            'restricted',
+            'denied',
+            'access denied',
+            'not authorized',
+            'unauthorized',
+        ];
+        foreach ($errorOrRestrictionMarkers as $marker) {
+            if (strpos($lowerMessage, $marker) !== false) {
+                return false;
             }
         }
 

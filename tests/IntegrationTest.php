@@ -275,4 +275,38 @@ class IntegrationTest extends TestCase
         $isAvailable = AvailabilityDetector::isAvailable($validAvailableResponse, '.shop', false);
         $this->assertTrue($isAvailable, 'Valid available domain response should be detected as available');
     }
+
+    public function testSxRestrictedDomainDetection()
+    {
+        // The .sx registry (CIRA backend) returns an error/restriction notice
+        // for registered-but-restricted/reserved names instead of a full WHOIS
+        // record. This response has zero registration fields, so the naive
+        // "few fields => available" heuristic wrongly reported it as available.
+        // Real response for the registered domain kick.sx:
+        $restrictedResponse = " ---Error code: 01044\n" .
+            "Error message: The domain name requested has usage restrictions applied to it. Please see your Registrar for more details.\n\n" .
+            "%\n% Use of CIRA's WHOIS service is governed by the Terms of Use in its Legal\n" .
+            "% Notice, available at https://www.cira.ca/en/resources/documents/about/website-terms-use\n%\n" .
+            "% (c) 2026 Canadian Internet Registration Authority, (http://www.cira.ca/)\n";
+
+        $isAvailable = AvailabilityDetector::isAvailable($restrictedResponse, '.sx', false);
+        $this->assertFalse($isAvailable, 'Registered/restricted .sx domain (e.g. kick.sx) must NOT be reported as available');
+
+        // A normal registered .sx domain (full record) must be unavailable.
+        $registeredResponse = " ---Domain Name: google.sx\nRegistrar: MarkMonitor Inc.\n" .
+            "Creation Date: 2012-09-22T02:52:06Z\nRegistry Expiry Date: 2026-09-22T02:52:06Z\n" .
+            "Name Server: NS1.GOOGLE.COM\nDomain Status: clientTransferProhibited";
+        $this->assertFalse(
+            AvailabilityDetector::isAvailable($registeredResponse, '.sx', false),
+            'Registered .sx domain with a full WHOIS record must be unavailable'
+        );
+
+        // A genuinely available .sx domain returns "Not found:" and must stay available.
+        $availableResponse = " ---Not found: definitelyfree99999zzz.sx\n";
+        $originalMatch = strpos(strtolower($availableResponse), strtolower('Not found:')) !== false;
+        $this->assertTrue(
+            AvailabilityDetector::isAvailable($availableResponse, '.sx', $originalMatch),
+            'Unregistered .sx domain ("Not found:") must be available'
+        );
+    }
 }
