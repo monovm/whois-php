@@ -309,4 +309,45 @@ class IntegrationTest extends TestCase
             'Unregistered .sx domain ("Not found:") must be available'
         );
     }
+
+    /**
+     * Regression: .site and .online moved off whois.centralnic.com, which now answers
+     * "DOMAIN NOT FOUND" for every query on those TLDs and made every domain look available.
+     */
+    public function testSiteAndOnlineUseCurrentRegistryServers()
+    {
+        $whois = new \MonoVM\WhoisPhp\Whois();
+
+        $this->assertSame(
+            'socket://whois.nic.site',
+            $whois->getFromDefinitions('.site', 'uri'),
+            '.site must not be routed to the stale whois.centralnic.com server'
+        );
+        $this->assertSame(
+            'socket://whois.nic.online',
+            $whois->getFromDefinitions('.online', 'uri'),
+            '.online must not be routed to the stale whois.centralnic.com server'
+        );
+
+        // A registered .site domain returns a full record and must be unavailable.
+        $registeredResponse = " ---Domain Name: google.site\nRegistry Domain ID: D8752736-CNIC\n" .
+            "Registrar: MarkMonitor Inc.\nCreation Date: 2015-07-08T09:03:40.000Z\n" .
+            "Registry Expiry Date: 2027-07-08T23:59:59.000Z\n" .
+            "Name Server: NS1.GOOGLE.COM\nDomain Status: clientTransferProhibited\nDNSSEC: unsigned";
+        $this->assertFalse(
+            AvailabilityDetector::isAvailable($registeredResponse, '.site', false),
+            'Registered .site domain with a full WHOIS record must be unavailable'
+        );
+
+        // An unregistered .site domain returns the Radix/Tucows banner and must stay available.
+        $availableResponse = " ---\n>>> Domain definitelyfree99999zzz.site is available for registration\n\n" .
+            ">>> Please visit https://rdap.radix.host/registrars/ for a list of accredited\nregistrars\n";
+        $marker = 'is available for registration';
+        $originalMatch = strpos(strtolower($availableResponse), strtolower($marker)) !== false;
+        $this->assertTrue($originalMatch, 'Configured .site available marker must match the registry banner');
+        $this->assertTrue(
+            AvailabilityDetector::isAvailable($availableResponse, '.site', $originalMatch),
+            'Unregistered .site domain must be available'
+        );
+    }
 }

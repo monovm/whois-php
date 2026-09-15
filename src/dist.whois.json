@@ -20,9 +20,21 @@
         "available": "No match for"
     },
     {
-        "extensions": ".br.com,.cn.com,.eu.com,.no.com,.qc.com,.sa.com,.se.com,.se.net,.us.com,.uy.com,.za.com,.uk.com,.uk.net,.gb.com,.gb.net,.online,.site",
+        "extensions": ".br.com,.cn.com,.eu.com,.no.com,.qc.com,.sa.com,.se.com,.se.net,.us.com,.uy.com,.za.com,.uk.com,.uk.net,.gb.com,.gb.net",
         "uri": "socket:\/\/whois.centralnic.com",
         "available": "DOMAIN NOT FOUND"
+    },
+    {
+        "extensions": ".site",
+        "uri": "socket:\/\/whois.nic.site",
+        "available": "is available for registration",
+        "comment": "Registry moved off whois.centralnic.com, which now answers DOMAIN NOT FOUND for every .site query"
+    },
+    {
+        "extensions": ".online",
+        "uri": "socket:\/\/whois.nic.online",
+        "available": "is available for registration",
+        "comment": "Registry moved off whois.centralnic.com, which now answers DOMAIN NOT FOUND for every .online query"
     },
     {
         "extensions": ".ink",
