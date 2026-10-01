@@ -1380,8 +1380,8 @@
     },
     {
         "extensions": ".shop",
-        "uri": "socket:\/\/whois.nic.shop",
-        "available": "DOMAIN NOT FOUND"
+        "uri": "https:\/\/rdap.gmoregistry.net\/rdap\/domain\/",
+        "available": "\"errorCode\":404"
     },
     {
         "extensions": ".games",

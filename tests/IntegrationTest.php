@@ -350,4 +350,17 @@ class IntegrationTest extends TestCase
             'Unregistered .site domain must be available'
         );
     }
+
+    public function testRetiredWhoisNoticeIsNotAvailable()
+    {
+        // GMO Registry retired whois.nic.shop on May 1, 2026. Every query, for
+        // registered and unregistered names alike, now returns only this notice.
+        // It has no registration fields, so it was reported as "available".
+        $retiredNotice = " ---Notice: Effective May 1, 2026, the WHOIS service has been retired in accordance with ICANN's RDAP transition policy. " .
+            "All registration data queries are now served via RDAP. " .
+            "The Registration Data Access Protocol (RDAP) base URL is: https://rdap.gmoregistry.net/rdap/";
+
+        $this->expectException(\Exception::class);
+        AvailabilityDetector::isAvailable($retiredNotice, '.shop', false);
+    }
 }

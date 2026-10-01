@@ -231,6 +231,10 @@ class AvailabilityDetector
             '/no\s+whois\s+(?:server|service)\s+(?:available|found)/i',
             '/whois\s+(?:server\s+)?not\s+(?:known|available|found)/i',
             '/(?:server|service)\s+not\s+(?:available|found)\s+for/i',
+            // Registries that shut down port 43 answer every query with a short
+            // retirement notice (e.g. whois.nic.shop since May 2026). It has no
+            // registration fields, so without this it reads as "available".
+            '/whois\s+(?:service|server)\s+has\s+been\s+(?:retired|decommissioned|discontinued)/i',
         ];
         
         foreach ($unsupportedRegexPatterns as $pattern) {
