@@ -179,8 +179,8 @@
     },
     {
         "extensions": ".li",
-        "uri": "socket:\/\/whois.nic.li",
-        "available": "We do not have an entry in our database matching your query"
+        "uri": "socket:\/\/whois.nic.ch:4343",
+        "available": "---1:"
     },
     {
         "extensions": ".lt",
@@ -289,7 +289,7 @@
     },
     {
         "extensions": ".com.tw,.org.tw,.net.tw",
-        "uri": "socket:\/\/whois.twnic.net",
+        "uri": "socket:\/\/whois.twnic.net.tw",
         "available": "No Found"
     },
     {
@@ -709,9 +709,9 @@
         "available": "Domain not found"
     },
     {
-        "extensions": ".airforce,.futbol,.social,.pub,.auction,.consulting,.dance,.democrat,.forsale,.haus,.immobilien,.kaufen,.reviews,.rocks",
-        "uri": "socket:\/\/whois.donuts.co",
-        "available": "Domain not found"
+        "extensions": ".airforce,.futbol,.social,.pub,.auction,.consulting,.dance,.democrat,.forsale,.haus,.immobilien,.kaufen,.reviews,.rocks,.juegos",
+        "uri": "https:\/\/rdap.identitydigital.services\/rdap\/domain\/",
+        "available": "Object not found"
     },
     {
         "extensions": ".actor",
@@ -764,9 +764,39 @@
         "available": "Available"
     },
     {
-        "extensions": ".gift,.guitars,.link,.pics,.sexy,.audio,.blackfriday,.christmas,.click,.diet,.flowers,.help,.hosting,.juegos,.lol,.photo,.property,.tattoo",
+        "extensions": ".link",
         "uri": "socket:\/\/whois.uniregistry.net",
         "available": "is available for registration"
+    },
+    {
+        "extensions": ".gift",
+        "uri": "socket:\/\/whois.registry.gift",
+        "available": "is available for registration"
+    },
+    {
+        "extensions": ".click,.sexy,.property",
+        "uri": "socket:\/\/whois.registry.click",
+        "available": "is available for registration"
+    },
+    {
+        "extensions": ".guitars,.pics,.audio,.christmas,.diet,.flowers,.help,.hosting,.lol",
+        "uri": "socket:\/\/whois.centralnic.com",
+        "available": "DOMAIN NOT FOUND"
+    },
+    {
+        "extensions": ".blackfriday",
+        "uri": "socket:\/\/whois.nic.blackfriday",
+        "available": "No Data Found"
+    },
+    {
+        "extensions": ".photo",
+        "uri": "socket:\/\/whois.nic.photo",
+        "available": "No Data Found"
+    },
+    {
+        "extensions": ".tattoo",
+        "uri": "socket:\/\/whois.nic.tattoo",
+        "available": "No Data Found"
     },
     {
         "extensions": ".hiphop",
@@ -1275,8 +1305,8 @@
     },
     {
         "extensions": ".ltd",
-        "uri": "socket:\/\/whois.donuts.co",
-        "available": "Domain not found"
+        "uri": "https:\/\/rdap.identitydigital.services\/rdap\/domain\/",
+        "available": "Object not found"
     },
     {
         "extensions": ".id,.co.id,.desa.id,.web.id,.ac.id,.or.id,.sch.id,.my.id,.biz.id",
@@ -1330,13 +1360,13 @@
     },
     {
         "extensions": ".doctor",
-        "uri": "socket:\/\/whois.nic.doctor",
-        "available": "Domain not found"
+        "uri": "https:\/\/rdap.identitydigital.services\/rdap\/domain\/",
+        "available": "Object not found"
     },
     {
         "extensions": ".mom",
-        "uri": "socket:\/\/whois.uniregistry.net",
-        "available": "is available for registration"
+        "uri": "socket:\/\/whois.centralnic.com",
+        "available": "DOMAIN NOT FOUND"
     },
     {
         "extensions": ".store",
@@ -1415,8 +1445,8 @@
     },
     {
         "extensions": ".game",
-        "uri": "socket:\/\/whois.uniregistry.net",
-        "available": "is available for registration"
+        "uri": "socket:\/\/whois.centralnic.com",
+        "available": "DOMAIN NOT FOUND"
     },
     {
         "extensions": ".ar,.com.ar,.org.ar,.gob.ar,.gov.ar,.tur.ar,.net.ar,.mil.ar,.musica.ar",

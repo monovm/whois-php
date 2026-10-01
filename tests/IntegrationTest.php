@@ -363,4 +363,19 @@ class IntegrationTest extends TestCase
         $this->expectException(\Exception::class);
         AvailabilityDetector::isAvailable($retiredNotice, '.shop', false);
     }
+
+    public function testThrottledOrEmptyReplyIsNotAvailable()
+    {
+        // The GoDaddy Registry WHOIS backend (.vip, .nyc, .win, ...) answers
+        // throttled clients with this line, or by closing the connection.
+        // Neither is an answer, so neither may be reported as available.
+        foreach ([" ---Number of allowed queries exceeded.\n", ' ---'] as $reply) {
+            try {
+                AvailabilityDetector::isAvailable($reply, '.vip', false);
+                $this->fail('Throttled/empty reply must raise an error, got a result: ' . json_encode($reply));
+            } catch (\Exception $e) {
+                $this->assertStringContainsString('rate-limited', $e->getMessage());
+            }
+        }
+    }
 }

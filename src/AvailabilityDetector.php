@@ -14,6 +14,13 @@ class AvailabilityDetector
             return true;
         }
 
+        // An empty reply (server closed the connection, e.g. when throttling)
+        // carries no answer at all; the sparse-response fallback below would
+        // otherwise read it as "available".
+        if (trim($whoisMessage, " -\r\n\t") === '') {
+            throw new \Exception('WHOIS server is temporarily unavailable or rate-limited. Please try again later.');
+        }
+
         // PRIORITY 1: Check for unsupported TLD or server error messages (highest priority)
         if (self::containsUnsupportedTldMessages($whoisMessage)) {
             // Determine the specific error type
@@ -25,6 +32,7 @@ class AvailabilityDetector
                 strpos($lowerMessage, 'rate limit') !== false ||
                 strpos($lowerMessage, 'too many requests') !== false ||
                 strpos($lowerMessage, 'quota exceeded') !== false ||
+                strpos($lowerMessage, 'queries exceeded') !== false ||
                 strpos($lowerMessage, 'timeout') !== false ||
                 strpos($lowerMessage, 'timed out') !== false ||
                 strpos($lowerMessage, 'connection') !== false) {
@@ -211,6 +219,7 @@ class AvailabilityDetector
             'rate limit exceeded',
             'too many requests',
             'quota exceeded',
+            'queries exceeded',
             'connection timed out',
             'connection timeout',
             'request timeout',
