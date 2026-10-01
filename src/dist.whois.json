@@ -355,7 +355,7 @@
     {
         "extensions": ".gov",
         "uri": "socket:\/\/whois.nic.gov",
-        "available": "No match for"
+        "available": "Domain not found"
     },
     {
         "extensions": ".name",

@@ -369,13 +369,46 @@ class IntegrationTest extends TestCase
         // The GoDaddy Registry WHOIS backend (.vip, .nyc, .win, ...) answers
         // throttled clients with this line, or by closing the connection.
         // Neither is an answer, so neither may be reported as available.
-        foreach ([" ---Number of allowed queries exceeded.\n", ' ---'] as $reply) {
+        $replies = [
+            " ---Number of allowed queries exceeded.\n",
+            ' ---',
+            " ---Error: ratelimit exceeded\n",                                   // .nl
+            " ---% WHOIS x.lu\n%% Excessive querying, grace period of 1 seconds\n", // .lu
+        ];
+        foreach ($replies as $reply) {
             try {
                 AvailabilityDetector::isAvailable($reply, '.vip', false);
                 $this->fail('Throttled/empty reply must raise an error, got a result: ' . json_encode($reply));
             } catch (\Exception $e) {
                 $this->assertStringContainsString('rate-limited', $e->getMessage());
             }
+        }
+    }
+
+    public function testSparseOrPaddedRegisteredRecordsAreNotAvailable()
+    {
+        // Real registered records that carry no "not found" marker. They used
+        // to read as available because they have few recognised fields
+        // (.hu, .sa) or pad their keys with dots/spaces (.fi, .tm).
+        $registered = [
+            '.hu' => " ---% Whois server 4.1 serving the hu ccTLD\n\ndomain:         google.hu\nrecord created: 2000-03-03\n",
+            '.sa' => " ---Domain Name: GOOGLE.SA\nRegistrant Name: GOOGLE LLC\nName Server: NS1.MARKMONITOR.COM\nDNSSEC: unsigned\n",
+            '.fi' => " ---domain.............: google.fi\nstatus.............: Registered\ncreated............: 30.6.2006 00:00:00\n" .
+                "expires............: 4.7.2027 10:15:55\navailable..........: 4.8.2027 10:15:55\n",
+            '.tm' => " ---Domain : google.tm\nStatus : Client Updt+Delt Lock\nExpiry : 2027-01-30\nNS 1   : ns1.google.com\n",
+        ];
+        foreach ($registered as $tld => $reply) {
+            $this->assertFalse(AvailabilityDetector::isAvailable($reply, $tld, false), "Registered $tld record must not be available");
+        }
+
+        // Their genuine "not found" replies (matching the configured marker) stay available.
+        $notFound = [
+            '.hu' => [" ---% Whois server 4.1 serving the hu ccTLD\nNincs talalat / No match\n", 'No match'],
+            '.fi' => [" ---Domain not found\nCopyright (c) Finnish Transport and Communications Agency Traficom\n", 'Domain not found'],
+        ];
+        foreach ($notFound as $tld => [$reply, $marker]) {
+            $originalMatch = stripos($reply, $marker) !== false;
+            $this->assertTrue(AvailabilityDetector::isAvailable($reply, $tld, $originalMatch), "Unregistered $tld must be available");
         }
     }
 }

@@ -14,6 +14,8 @@ class AvailabilityDetector
             return true;
         }
 
+        $whoisMessage = self::normalizeKeys($whoisMessage);
+
         // An empty reply (server closed the connection, e.g. when throttling)
         // carries no answer at all; the sparse-response fallback below would
         // otherwise read it as "available".
@@ -33,6 +35,8 @@ class AvailabilityDetector
                 strpos($lowerMessage, 'too many requests') !== false ||
                 strpos($lowerMessage, 'quota exceeded') !== false ||
                 strpos($lowerMessage, 'queries exceeded') !== false ||
+                strpos($lowerMessage, 'ratelimit') !== false ||
+                strpos($lowerMessage, 'excessive querying, grace period') !== false ||
                 strpos($lowerMessage, 'timeout') !== false ||
                 strpos($lowerMessage, 'timed out') !== false ||
                 strpos($lowerMessage, 'connection') !== false) {
@@ -84,6 +88,8 @@ class AvailabilityDetector
      */
     public static function getAvailabilityDetails(string $whoisMessage, string $tld = '', bool $originalResult = false): array
     {
+        $whoisMessage = self::normalizeKeys($whoisMessage);
+
         // Check for unsupported TLD first
         $containsUnsupportedTld = self::containsUnsupportedTldMessages($whoisMessage);
         
@@ -220,6 +226,8 @@ class AvailabilityDetector
             'too many requests',
             'quota exceeded',
             'queries exceeded',
+            'ratelimit exceeded',
+            'excessive querying, grace period',
             'connection timed out',
             'connection timeout',
             'request timeout',
@@ -722,6 +730,15 @@ class AvailabilityDetector
     }
 
     /**
+     * Collapse padded keys ("status.......: x", "Domain   : x") to "key: x"
+     * so field patterns match registries that align their output.
+     */
+    private static function normalizeKeys(string $whoisMessage): string
+    {
+        return preg_replace('/^([ \t]*[A-Za-z][\w \-\/]*?)[ \t.]+:/m', '$1:', $whoisMessage);
+    }
+
+    /**
      * Check for domain status indicators that suggest availability
      */
     private static function checkDomainStatusIndicators(string $whoisMessage): bool
@@ -747,56 +764,10 @@ class AvailabilityDetector
             }
         }
 
-        // Check for absence of typical registration fields
-        $registrationFields = [
-            'registrar:',
-            'creation date:',
-            'created:',
-            'expiry date:',
-            'expires:',
-            'name server:',
-            'nameserver:',
-            'nserver:',
-            'registrant:',
-            'admin contact:',
-            'technical contact:',
-        ];
-
-        $foundFields = 0;
-        foreach ($registrationFields as $field) {
-            if (strpos($lowerMessage, $field) !== false) {
-                $foundFields++;
-            }
-        }
-
-        // Absence of registration fields is NOT proof of availability: registry
-        // error/restriction notices (e.g. "Error code: ... usage restrictions")
-        // also contain no registration fields, yet the domain IS registered.
-        // Only treat a sparse response as available when it shows no error or
-        // restriction markers. Genuine availability is otherwise established by
-        // the explicit availability/no-match checks in earlier priorities.
-        $errorOrRestrictionMarkers = [
-            'error code:',
-            'error message:',
-            'usage restrictions',
-            'please see your registrar',
-            'please contact',
-            'is reserved',
-            'reserved name',
-            'restricted',
-            'denied',
-            'access denied',
-            'not authorized',
-            'unauthorized',
-        ];
-        foreach ($errorOrRestrictionMarkers as $marker) {
-            if (strpos($lowerMessage, $marker) !== false) {
-                return false;
-            }
-        }
-
-        // If we find very few registration fields, domain might be available
-        return $foundFields < 2;
+        // A reply without any availability signal is NOT proof of availability:
+        // registered records in sparse formats (.hu, .sa, .lu), reserved names,
+        // registry notices and throttling replies all look like this.
+        return false;
     }
 
     /**
