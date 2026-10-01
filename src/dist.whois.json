@@ -519,7 +519,7 @@
     },
     {
         "extensions": ".za.net,.za.org",
-        "uri": "http:\/\/www.za.net\/cgi-bin\/whois.cgi?domain=",
+        "uri": "https:\/\/www.za.net\/cgi-bin\/whois.cgi?domain=",
         "available": "No such domain"
     },
     {
@@ -845,7 +845,7 @@
     },
     {
         "extensions": ".co.zw",
-        "uri": "http:\/\/zispa.org.zw\/cgi-bin\/domain_lookup.pl?s=",
+        "uri": "https:\/\/zispa.org.zw\/cgi-bin\/domain_lookup.pl?s=",
         "available": "is available for registration"
     },
     {

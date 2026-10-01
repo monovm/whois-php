@@ -228,6 +228,8 @@ class AvailabilityDetector
             'queries exceeded',
             'ratelimit exceeded',
             'excessive querying, grace period',
+            // Cloudflare JS challenge served instead of the WHOIS page (.ph)
+            'enable javascript and cookies to continue',
             'connection timed out',
             'connection timeout',
             'request timeout',
@@ -578,7 +580,7 @@ class AvailabilityDetector
             '/---not\s+found/i',
             '/---domain\s+not\s+found/i',
             '/%error:103/i',
-            '/404/i', // For RDAP servers
+            '/"errorCode"\s*:\s*404\b/', // RDAP not-found body
         ];
 
         foreach ($noMatchPatterns as $pattern) {

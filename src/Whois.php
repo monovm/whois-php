@@ -182,6 +182,12 @@ class Whois
 
             return $results;
         }
+        if (!$isSocketLookup && stripos($lookupResult, '<html') !== false) {
+            // Web WHOIS pages: match markers and keywords against the visible
+            // text only, not meta tags, scripts or HTML entities.
+            $lookupResult = preg_replace('#<(script|style)\b.*?</\1>#is', '', $lookupResult);
+            $lookupResult = html_entity_decode(strip_tags($lookupResult), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        }
         $lookupResult = ' ---' . $lookupResult;
         $results = [];
         

@@ -411,4 +411,22 @@ class IntegrationTest extends TestCase
             $this->assertTrue(AvailabilityDetector::isAvailable($reply, $tld, $originalMatch), "Unregistered $tld must be available");
         }
     }
+
+    public function testDigitsAndChallengePagesAreNotAvailabilitySignals()
+    {
+        // A bare "404" pattern matched Google's ZIP code 94043, so this real
+        // registered google.jp record was reported as available.
+        $googleJp = " ---[Domain Name]                   GOOGLE.JP\n[Registrant]                    Google LLC\n" .
+            "[Name Server]                   ns1.google.com\n[状態]                          Active\n" .
+            "[郵便番号]                      94043\n";
+        $this->assertFalse(AvailabilityDetector::isAvailable($googleJp, '.jp', false), 'Registered google.jp must not be available');
+
+        // The RDAP not-found body is still recognised.
+        $rdap404 = ' ---{"errorCode": 404, "title": "Not Found", "rdapConformance": ["rdap_level_0"]}';
+        $this->assertTrue(AvailabilityDetector::isAvailable($rdap404, '.example', false));
+
+        // Cloudflare's JS challenge (served for every .ph lookup) is an error, not an answer.
+        $this->expectException(\Exception::class);
+        AvailabilityDetector::isAvailable(' ---Just a moment...Enable JavaScript and cookies to continue', '.ph', false);
+    }
 }
